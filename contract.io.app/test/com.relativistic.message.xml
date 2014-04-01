@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<contract namespace="com.relativistic.message" ord="0" version="1.0" >
+	<enum name="StatusCode" ord="0">
+		<element name="OK" ord="0" />
+		<element name="EntryNotFound" ord="1" />
+		<element name="IllegalMessageFormat" ord="2" />
+		<element name="ServerError" ord="3" />
+		<element name="InvalidCredentials" ord="4" />
+	</enum>
+	<type name="AbstractRequest" ord="1">
+		<field name="messageId" type="i32" ord="0" />
+		<field name="userName" type="string" maxLength="64" ord="1"/>
+		<field name="password" type="string" maxLength="16" ord="2" />
+		<field name="lastUpdate" type="i64" opt="true" ord="3"/>
+	</type>
+	<type name="AbstractResponse" ord="2">
+		<field name="messageId" type="i32" ord="0"/> 
+		<field name="statusCode" type="StatusCode" ord="1" />
+		<field name="lastUpdate" type="i64" ord="2" />
+	</type>
+</contract>
+	

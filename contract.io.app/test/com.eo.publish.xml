@@ -1,0 +1,140 @@
+<?xml version="1.0"?>
+<contract namespace="com.eo.publish" version="1.0" >
+	<include namespace="com.eo.message" />
+
+	<!-- Base class for all posts, includes a postId for updates -->
+	<type name="AbstractPost">
+		<field name="postId" type="i64" opt="true" ord="0"/>
+	</type>
+		
+	<!-- Like a tweet, Comments are limited to only 140 characters, and must explicitly embed content URIs -->
+	<type name="Brief" extends="AbstractPost">
+		<field name="text" type="string" maxLength="140" ord="0" />
+	</type>
+	
+	<!-- Idea posts are equivalent to a Facebook status update, which is llmited to 420 characters.
+		Links to media, however, are maitained by a separate field. -->
+	<type name="Comment" extends="AbstractPost">
+		<field name="text" type="string" maxLength="420" ord="0" />
+		<field name="url" type="string" maxLength="1024" ord="1" />
+	</type>
+	
+	<!-- Articles are the basic full-featured SVG documents, offering  -->
+	<type name="Publication" extends="AbstractPost">
+		<field name="svg" type="string" maxLength="1MB" ord="0" />
+	</type>
+	
+	<!-- Messages for post types -->
+	<type name="CreatePostRequest" extends="AbstractRequest">
+		<field name="post" type="AbstractPost" ord="0" />
+	</type>
+	
+	<!-- Feed Requests -->
+	<type name="RetrievePostsRequest" extends="AbstractRequest">
+		<field name="sors" type="set[i64]" opt="true" ord="0" />
+		<union ord="1">
+			<field name="postId" type="i64" />
+			<field name="query" type="string" maxLength="1024" />
+		</union>
+	</type>
+	
+	<type name="UpdatePostRequest" extends="AbstractRequest">
+		<field name="sors" type="set[i64]" opt="true" ord="0" />
+		<field name="postId" type="i64" ord="1" />
+		<field name="post" type="AbstractPost" ord="2" />
+	</type>
+	
+	<type name="DeletePostRequest" extends="AbstractRequest">
+		<field name="sors" type="set[i64]" opt="true" ord="0" />
+		<union ord="1">
+			<field name="postId" type="i64" />
+			<field name="query" type="string" maxLength="1024" />
+		</union>
+	</type>
+
+	<!-- Author, included in retrieved posts -->	
+	<type name="Author">
+		<field name="postId" type="i64" ord="0" />
+		<field name="name" type="string" maxLength="64" ord="1" />
+		<field name="authorId" type="string" maxLegth="128" ord="2" />
+		<field name="sor" type="string" maxLength="64" ord="3" />
+	</type>
+	
+	<!-- Abstract response type for all posts -->
+	<type name="AbstractPostEntry">
+		<field name="postId" type="i64" ord="0" />
+		<field name="author" type="Author" ord="1" />
+		<field name="datePublished" type="i64" ord="2" />
+		<field name="post" type="AbstractPost" ord="3" />
+	</type>
+	
+	<!-- The retrieved entry for a comment, may be internally or from an external sor -->
+	<type name="CreatePostResponse" extends="AbstractResponse">
+		<field name="postEntry" type="AbstractPostEntry" ord="0" />
+	</type>
+	
+	<type name="RetrievePostsResponse" extends="AbstractResponse">
+		<field name="postEntries" type="list[AbstractPostEntry]" ord="0" />
+	</type>
+	`
+	<type name="UpdatePostResponse" extends="AbstractResponse">
+		<field name="postEntry" type="AbstractPostEntry" ord="0" />
+	</type>
+	
+	<!-- Message format containing a list of posts -->
+	<type name="DeletePostsResponse" extends="AbstractResponse" />
+	
+	<!-- Exceptions -->
+	<exception name="InvalidCredentials" />
+	<exception name="InvalidArguments" />
+	<exception name="ServerError" />		
+		
+	<!-- Interface Definitions -->
+	<interface name="Publish" uri="api/publish" implementable="true">
+		<!-- Create a new post -->
+		<method name="create" returns="CreatePostResponse" action="post">
+			<arguments>
+				<field name="post" type="CreatePostRequest" />
+			</arguments>
+			<exceptions>
+				<exception name="InvalidCredentials" />
+				<exception name="InvalidArguments" />
+				<exception name="ServerError" />
+			</exceptions>
+		</method>
+		<!-- Retrieve posts using criteria with RetrievePostsRequest -->
+		<method name="retrieve" returns="RetrievePostsResponse" action="get">
+			<arugments>
+				<field name="query" type="RetrievePostsRequest" />
+			</arugments>
+			<exceptions>
+				<exception name="InvalidCredentials" />
+				<exception name="InvalidArguments" />
+				<exception name="ServerError" />
+			</exceptions>
+		</method>
+		<!-- Update a post -->
+		<method name="update" returns="UpdatePostResponse" action="put">
+			<arguments>
+				<field name="post" type="UpdatePostRequest" />
+			</arguments>
+			<exceptions>
+				<exception name="InvalidCredentials" />
+				<exception name="InvalidArguments" />
+				<exception name="ServerError" />
+			</exceptions>
+		</method>
+		<!-- Delete posts matching criteria specified in DeletePostRequest -->
+		<method name="delete" returns="DeletePostsResponse" action="delete">
+			<arguments>
+				<field name="query" type="DeletePostRequest" />
+			</arguments>
+			<exceptions>
+				<exception name="InvalidCredentials" />
+				<exception name="InvalidArguments" />
+				<exception name="ServerError" />
+			</exceptions>
+		</method>
+	</interface>
+</contract>	
+	

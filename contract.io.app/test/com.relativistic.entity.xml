@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<contract namespace="com.relativistic.entity" ord="0" version="1.0" >
+	<entity name="AbstractEntity">
+		<field name="id" type="i32" index="id" unique="true" ord="0" />
+		<field name="entityName" type="String" maxLength="128" index="unique" ord="1" />
+	</entity>
+	<type name="Vector2d">
+		<field name="x" type="Double" ord="0" />
+		<field name="y" type="Double" ord="1" />		
+	</type>
+	<type name="Vector3d">
+		<field name="x" type="Double" ord="0" />
+		<field name="y" type="Double" ord="1" />		
+		<field name="z" type="Double" ord="2" />		
+	</type>
+	<entity name="PhysicalEntity" extends="AbstractEntity">
+		<field name="name" type="String" maxLength="128" index="nonUnique" ord="0" />
+		<field name="position" type="Vector3d" ord="1" />
+		<field name="orientation" type="Vector3d" ord="2" />
+		<field name="velocity" type="Vector3d" ord="3" />
+		<field name="rotation" type="Vector3d" ord="4" />
+		<field name="acceleration" type="Vector3d" ord="5" /> 
+		<field name="mass" type="float" ord="6" />
+		<field name="state" type="i8" ord="7" />
+	</entity>
+</contract>
+	

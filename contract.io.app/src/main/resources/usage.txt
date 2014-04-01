@@ -1,0 +1,46 @@
+Usage: 	java -jar contract.jar ?[--plugin-path [directory]] --plugin [language] ?[--input-path [file | directory]] 
+	?[--output-path [directory]] ?[--protocol [protocol, *protocol]] ?[-n [namespace]]
+
+Options include:
+    --input-path		Input path, may be either a file or a directory.
+
+    --output-path		Output path, used as a root for generated source files and directories.  
+    				Defaults to the current working directory.
+    			
+  	--plugin-path		Set the plugin path
+
+    --plugin	  		Language target for output, based on a naming convention pairing language 
+    				extensions to library names. Default supported languages are Java, Python, 
+    				Ruby, PHP, C++, and JavaScript. For example, to indicate output using the 
+    				java.jar plugin, use: -l java.  Only one output language format is supported 
+    				per generation. Use '-plugin ?' to output all supported languages, encodings, 
+    				and protocols.
+
+    --protocol			Specify the protocols for output.  The delcaration of a protocol will generate  
+    				code to bind the receipt of messages over the protocol (tcp and http
+    				currently supported) to an implementation of interfaces defined in the target
+    				module(s) specified by the input path.  tcp supports both binary and utf-8
+    				encoding.  The syntax for this argument is *[[protocol:port]*[,protocol:port]].
+    				Code generated for a protocol will be created (when possible) in a namespace /
+    				package extension using the protocol name.
+    				  
+    --encoding			Encodings determine the serialization logic that will be generated to convert
+    				objects defined in contract to and from transport buffers.  There are two classes of
+    				encoding types, binary and character based.  Current supported binary formats are
+    				contract (native), protobuf, and thrift.  Current utf-8 based formats are xml and
+    				json.  Multiple encoding formats can be declared, using a comma delimiter.  While 
+    				a protocol declaration is optional, an encoding must be specified.
+    						  
+    --version			Output this binary's version.    
+    
+    --help			Output this menu.     
+ 
+Example:
+	   
+To create interfaces on Java using Contract's native binary tcp protocol on port 2012:
+
+java -jar contract.jar --plugin java-1.0 --protocol tcp:2012 --encoding contract
+
+To create interfaces on Java using Contract's HTTP REST using JSON protocol on port 8080:
+
+java -jar contract.jar --plugin java-1.0 --protocol http:8080 --encoding json
